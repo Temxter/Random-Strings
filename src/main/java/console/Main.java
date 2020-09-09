@@ -5,18 +5,19 @@ import services.EntityFilesService;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.util.Arrays;
 
 public class Main {
     public static void main(String[] args) {
 //        Arrays.stream(args).forEach(System.out::println);
-        if (args.length <= 1) {
+        if (args.length == 0) {
             System.out.println("Too few arguments!");
             System.out.println(infoProgramMessage);
             System.exit(0);
         }
-        switch (args[1]) {
-            case "-g":
+        switch (args[0]) {
             case "--generate":
+            case "-g":
                 generate(args);
                 break;
             case "--concat":
@@ -43,12 +44,12 @@ public class Main {
 
     private static void generate(String[] args) {
         String correctMessage = "Correct: --generate NumberOfFiles NumberOfStrings";
-        if (args.length <= 3) {
+        if (args.length <= 2) {
             System.err.println("Error parse params. " + correctMessage);
         } else {
             try {
-                int numberOfFiles = Integer.parseInt(args[2]);
-                int numberOfStrings = Integer.parseInt(args[3]);
+                int numberOfFiles = Integer.parseInt(args[1]);
+                int numberOfStrings = Integer.parseInt(args[2]);
                 EntityFilesService.generateFiles(numberOfFiles, numberOfStrings, "file");
             } catch (NumberFormatException e) {
                 System.err.println("Format of numbers not correct: " + e.getMessage() + correctMessage);
@@ -58,15 +59,15 @@ public class Main {
 
     private static void concat(String[] args) {
         String correctMessage = "Correct: --concat inputFile1 inputFile2 outputFile [skipSubstring]";
-        if (args.length <= 3) {
+        if (args.length <= 2) {
             System.err.println("Error parse params. " + correctMessage);
         } else {
-            String inputFile1 = args[2];
-            String inputFile2 = args[3];
-            String outputFile = args[4];
+            String inputFile1 = args[1];
+            String inputFile2 = args[2];
+            String outputFile = args[3];
             try {
-                if (args.length == 6) {
-                    String skipSubstring = args[5];
+                if (args.length == 5) {
+                    String skipSubstring = args[4];
                     EntityFilesService.uniteFiledWithRemoveStrings(inputFile1, inputFile2, outputFile,
                             skipSubstring);
                 }
@@ -87,7 +88,7 @@ public class Main {
         if (args.length <= 1) {
             System.err.println("Error parse params. " + correctMessage);
         } else {
-            String inputFile = args[2];
+            String inputFile = args[1];
             try {
                 EntityFilesService.importToDatabase(inputFile);
             } catch (FileNotFoundException e) {
@@ -98,7 +99,7 @@ public class Main {
 
     private static String infoProgramMessage = "Program of manipulations with Entity.\n" +
             "Commands:\n" +
-            "'--generate n m' or '--g n m' - generate n files with m strings;\n" +
+            "'--generate n m' or '-g n m' - generate n files with m strings;\n" +
             "'--concat in1 in2 out [skip]' or '-c in1 in2 out [skip]' " +
             "- concatenate in1 and in2 files in out file and skips lines in in1 and in2 that contain skip substring" +
             " [skip - optional param];\n" +
